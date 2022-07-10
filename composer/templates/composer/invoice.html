@@ -1,0 +1,96 @@
+<style>
+#heading {
+    background-color: rgb(248, 154, 66);
+    color: white;
+    width: 100%;
+    padding: 20px;
+    padding-bottom:8px;
+    font-size: 16px;
+}
+.center {
+    text-align: center
+}.welcome{
+    font-size: 12px;
+    background-color:gray;
+    padding:10px;
+    color:white;
+    padding-bottom:1px
+}
+th {
+    text-align:left;
+    background-color:rgb(53, 53, 53);
+    color:white;
+    padding:7px;
+    padding-bottom: 3px;
+    border:1px solid rgb(53, 53, 53);
+
+}td{
+    padding:5px 7px;
+    padding-bottom: 0px;
+    border:1px solid rgb(53, 53, 53);
+}
+</style>
+
+<h4 id = "heading" >Sheet Music Africa Revenue Report </h4>
+<div class="welcome">Hello {{username}},
+{% if song_sales %}
+ Here is your Sales Report 
+{% else %}
+ There is No Sales Report
+{% endif %}</div>
+{% if song_sales %}
+    <div class="table-container">
+        <table>
+            <tbody>
+                <tr>
+                    <th>Date</th>
+                    <th>Song sold</th>
+                    <th>Returns</th>
+                    <th>Buyer's Email</th>
+                    <th>Revenue</th>
+                </tr>
+                {% for report in song_sales %}
+                <tr>
+                    <td>{{report.date_purchased}}</td>
+                    <td>{{report.score.main_song.name}} - {{report.score.name}}</td>
+                    <td>{{report.purchased_percentage}}%</td>
+                    <td>{{report.user.email}}</td>
+                    <td>${{report.seller_revenue}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endif %}
+<br />  
+{% if withdrawl_report %}
+<div class="welcome">Here is your Withdraw Report</div>
+    <div class="table-container">
+
+        <table style="width:100%">
+            <tr>
+                <th>Date</th>
+                <th>Currency</th>
+                <th>Ammount withdrawn</th>
+                <th>Ammount was Paid To</th>
+
+            </tr>
+            
+            {% for report in withdrawl_report %}
+                <tr>
+                    <td>{{report.date}}</td>
+                    <td>{{report.currency}}</td>
+                    <td>${{report.price}}</td>
+                    
+                    {% if report.email_paid_to %}
+                        <td>{{report.email_paid_to}}(Paypal)</td>
+                    {% else %}
+                        <td>{{report.bank_paid_to}}({{report.bank_name_paid_to}})</td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+            
+        </table>
+        {% comment %} Add Account Number and Email feild {% endcomment %}
+    </div>
+{% endif %}

@@ -30,7 +30,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", get_random_secret_key()) 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DEBUG", "False") == "True"
+DEBUG = os.getenv("DEBUG", "True") == "True"
 
 DEVELOPMENT_MODE = os.getenv("DEVELOPMENT_MODE", "True") == "True"
 
@@ -39,6 +39,7 @@ ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1").split(",")
 
 CORS_ALLOWED_ORIGINS = [
     "https://www.sheetmusicafrica.com",
+    "http://localhost:3000"
 ]
 
 
@@ -204,7 +205,7 @@ MAIN_ADDRESS = os.getenv("site_address")
 
 # price Values
 
-MINIMUM_SCORE_PRICE = float(os.getenv("min_price"))
+MINIMUM_SCORE_PRICE = float(os.getenv("min_price","5.0"))
 
 PAYMENT_LANDMARK = 100
 PAYMENT_LANDMARK_CURRENCY = "USD"
@@ -224,9 +225,9 @@ FLUTTER_WAVE_COUNTRIES = ['NIGERIA', 'GHANA', 'KENYA', 'UGANDA', 'TANZANIA', 'SO
                           'IVORY COAST', 'SIERRA LEONE', 'BURKINA FASO', 'GUINEA BISSAU', 'MALI', 'SENEGAL', 'RWANDA', 'TUNISIA', 'GUINEA CONAKRY']
 
 
-PAYMENT_SECRET_KEY = os.environ['FLUTTER_WAVE_KEY']
+PAYMENT_SECRET_KEY = os.getenv('FLUTTER_WAVE_KEY',"")
 
 
 
-LOGO_URL = os.getenv("logo_url")
+LOGO_URL = os.getenv("logo_url","")
 

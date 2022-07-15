@@ -1,17 +1,13 @@
-# from django.shortcuts import render, HttpResponse
-from django.contrib.auth.models import User, AnonymousUser
+from django.contrib.auth.models import User
 from django.db.models import Q
-from django.core.files.temp import NamedTemporaryFile
-# from django.core import files
-# from wsgiref.util import FileWrapper
 
 from rest_framework import viewsets, pagination
-# from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.parsers import MultiPartParser, FormParser
-from rest_framework import  generics, views, status #permissions,
+from rest_framework import  generics, views, status 
 
+from utility.utils import processNewGenre
 
 from .serializer import *
 from .models import *
@@ -131,12 +127,21 @@ class SheetMusicView(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         client_data = self.request.data
+
+        if "new_genre" in client_data.keys():
+            processNewGenre(client_data['new_genre'])
+
+
         genre = client_data['genre'].split(",")
         thumbnail = client_data['thumbnail']
         main_sheet = serializer.save(
             composer=self.request.user, genre=genre, thumbnail=thumbnail)
 
+        if "tags" in client_data.keys():
+            main_sheet.tags = client_data['tags']
+
         music_scores = client_data['music_scores'].split(',')
+
 
         for score in music_scores:
             current_score_info = score.split(':')
@@ -152,34 +157,6 @@ class SheetMusicView(viewsets.ModelViewSet):
             else:
                 main_sheet.delete()
 
-    # def create(self, request):
-    #     client_data = request.data
-    #     serializer = SheetMusicSerializer
-
-    #     genre = client_data['genre'].split(",")
-    #     thumbnail = client_data['thumbnail']
-    #     main_sheet = serializer.save(
-    #         composer=request.user, genre=genre, thumbnail=thumbnail)
-
-    #     music_scores = client_data['music_scores'].split(',')
-
-    #     for score in music_scores:
-    #         current_score_info = score.split(':')
-    #         price = current_score_info[1]
-
-    #         if float(price) >= MINIMUM_SCORE_PRICE:
-    #             new_score = Score()
-    #             new_score.main_song = main_sheet
-    #             new_score.name = current_score_info[0]
-    #             new_score.price = decimal.Decimal(price)
-    #             new_score.sheet = client_data['file_%s' % current_score_info[2]]
-    #             new_score.save()
-    #         else:
-    #             main_sheet.delete()
-    #             return Response({'msg':'price is too low'},status=status.HTTP_400_BAD_REQUEST)
-
-    #     return Response({'msg':'successful'},status=status.HTTP_201_CREATED)
-
 
     def update(self, request, pk=None):
 
@@ -188,14 +165,16 @@ class SheetMusicView(viewsets.ModelViewSet):
             data = self.request.data
             sheet_scores = []
 
-            print(data)
-
             if 'audio' in data.keys():
                 main_sheet.audio.delete()
+
+            if "tags" not in data.keys():
+                    main_sheet.tags = ""
 
             serializer = SheetMusicSerializer(main_sheet, data=data)
             if serializer.is_valid():
                 main_sheet.genre.clear()
+
                 main_sheet = serializer.save()
 
                 if data['genre'] != "":

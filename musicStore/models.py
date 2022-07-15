@@ -44,6 +44,7 @@ class SheetMusic(models.Model):
     deleted = models.BooleanField(default=False)
     verified = models.BooleanField(default=False)
     rejected = models.BooleanField(default=False)
+    tags = models.TextField(blank=True,default="")
 
     class Meta:
         ordering = ['-rejected','verified']

@@ -42,7 +42,7 @@ class SheetMusicSerializer(serializers.ModelSerializer):
     class Meta:
         model = SheetMusic
         fields = ["id", "name", "genre", "discription", "rating", "skill_level", "video_link",
-                  "demo", "thumbnail", "audio", "composer", "username", 'star', 'price', 'partScore']
+                  "demo", "thumbnail", "audio", "composer", "username", 'star', 'price', 'partScore','tags']
                   
 
     def get_username(self, obj):

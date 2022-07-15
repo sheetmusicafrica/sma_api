@@ -86,3 +86,13 @@ class UserPaymentLog(models.Model):
 
     def __str__(self):
         return self.user.first_name
+
+
+
+class Subscriber(models.Model):
+    name = models.CharField(max_length=200,blank=True)
+    email = models.EmailField()
+    date_subscribed =  models.DateField(default = timezone.now)
+
+    def __str__(self):
+        return self.email

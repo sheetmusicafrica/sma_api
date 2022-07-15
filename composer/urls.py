@@ -12,6 +12,7 @@ router.register(r'relationship', views.ComposerRelationshipView,
                 basename="relationship")
 
 urlpatterns = [
+    path('subscribe/', views.subscribe, name='subscribe'),
     path('register/', views.RegisterUser.as_view(), name='RegisterUser'),
     path('get-user/', views.getUser.as_view(), name='getUser'),
     path('change-password/', views.ChangePassword.as_view(), name='ChangePassword'),

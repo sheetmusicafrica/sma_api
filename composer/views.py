@@ -8,7 +8,7 @@ from django.template.loader import get_template
 from rest_framework import viewsets, pagination
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view,permission_classes
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import permissions, generics, views, status
 
@@ -509,3 +509,16 @@ def render_to_pdf(template_src, context_dict={}):
 def testpaypal(request):
     data = get_paypal_access_token()
     return Response(data)
+
+
+
+@api_view(['POST'])
+@permission_classes([permissions.AllowAny])
+def subscribe(request):
+    email = request.POST['email']
+    try:
+        Subscriber.objects.get(email=email)
+    except Subscriber.DoesNotExist:
+        Subscriber(email=email).save()
+
+    return Response({})

@@ -1,0 +1,17 @@
+<head>
+    <title>{{song.name}}, Composed by {{song.composer}}</title>
+    <meta name="description" content={{song.discription}} >				
+    <meta property="og:title" content={{song.name}}, Composed by {{song.composer}} >
+    <meta property="og:type" content="Document.PDF" >
+    <meta property="og:url" content={{url}} >
+    {% if song.thumbnail %}
+        <meta property="og:image" content={{song.thumbnail.url}} >
+    {% endif %}
+    <meta property="og:site_name" content="Sheet Music Africa" >
+    {% if song.audio %}
+        <meta property="og:audio" content={{song.audio.url}} >
+    {% endif %}
+    {% if song.video_link %}
+        <meta property="og:video" content={{song.video_link}} >
+    {% endif %}
+</head>

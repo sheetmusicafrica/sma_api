@@ -1,5 +1,7 @@
 from django.contrib.auth.models import User
 from django.db.models import Q
+from django.http import HttpResponseRedirect,HttpResponse
+from django.shortcuts import render
 
 from rest_framework import viewsets, pagination
 from rest_framework.response import Response
@@ -13,12 +15,9 @@ from .serializer import *
 from .models import *
 
 from composer.models import FollowComposer, UserPaymentHistory, UserPaymentLog, ComposerProfile,ComposerAccount
-from sheet_music_africa.settings import LOGO_URL,MINIMUM_SCORE_PRICE, PAYMENT_SECRET_KEY, FLUTTER_WAVE_COUNTRIES, FLUTTER_URL, AWS_STORAGE_BUCKET_NAME, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_S3_REGION_NAME, ACCOUNT_NAME
+from sheet_music_africa.settings import BOTREGEX,LOGO_URL,MINIMUM_SCORE_PRICE, PAYMENT_SECRET_KEY, FLUTTER_WAVE_COUNTRIES, FLUTTER_URL, AWS_STORAGE_BUCKET_NAME, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_S3_REGION_NAME, ACCOUNT_NAME
 
-import requests
-import math
-import datetime
-import decimal
+import requests,math,datetime,decimal,re
 
 import boto3
 from botocore.exceptions import ClientError
@@ -732,3 +731,27 @@ def markSong(request):
 
     else:
         return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+
+#Link Sharing
+
+@api_view(['get'])
+def deapLink(request,link):
+    try:
+        pk = int(link.split("-")[-1])
+        song = SheetMusic.objects.get(pk=pk)
+
+        url = f"https://www.sheetmusicafrica.com/c/{song.composer.username}/{link}"
+
+        if re.search(f"^{BOTREGEX}",request.META['HTTP_USER_AGENT']) == None:
+            return HttpResponseRedirect(url)
+        else:
+            if song.deleted == False:
+                return render(request,'musicStore/crawler.html',{'song':song,'url':url})
+
+    except SheetMusic.DoesNotExist:
+        pass
+
+    return HttpResponse("")
+
+    

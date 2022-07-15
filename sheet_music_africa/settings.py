@@ -231,3 +231,5 @@ PAYMENT_SECRET_KEY = os.getenv('FLUTTER_WAVE_KEY',"")
 
 LOGO_URL = os.getenv("logo_url","")
 
+
+BOTREGEX = os.getenv('BOTREGEX',"Twitterbot|Whatsapp|facebookexternalhit")

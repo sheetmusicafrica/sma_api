@@ -63,7 +63,7 @@ INSTALLED_APPS = [
 
     'storages',
 
-    #'rest_framework_simplejwt.token_blacklist',
+    'rest_framework_simplejwt.token_blacklist',
 ]
 
 MIDDLEWARE = [
@@ -193,7 +193,7 @@ REST_FRAMEWORK = {
 
 # Email configurations
 EMAIL_HOST = os.getenv("email_host")
-EMAIL_HOST_USER = os.getenv("email_host_user") # this is exactly the value 'apikey'
+EMAIL_HOST_USER = os.getenv("email_host_user")
 EMAIL_HOST_PASSWORD = os.getenv("email_password")
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
@@ -232,4 +232,13 @@ PAYMENT_SECRET_KEY = os.getenv('FLUTTER_WAVE_KEY',"")
 LOGO_URL = os.getenv("logo_url","")
 
 
-BOTREGEX = os.getenv('BOTREGEX',"Twitterbot|Whatsapp|facebookexternalhit")
+BOTREGEX = os.getenv('BOTREGEX')
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
+}
+
+MAIN_SITE_ADDRESS = "https://www.sheetmusicafrica.com"

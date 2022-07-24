@@ -1,3 +1,4 @@
+from email.policy import default
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
@@ -31,7 +32,10 @@ class SheetMusic(models.Model):
     discription = models.TextField(default="")
     genre = models.ManyToManyField(Genre)
     rating = models.PositiveIntegerField(default=0)
+    #the person uploading the sheet
     composer = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    #contains namae of all the composers seperated by a ,
+    composed_by = models.TextField(default="")
     # schange to a choice select whenever possible
     skill_level = models.CharField(max_length=15, default="Beginner")
     video_link = models.TextField(default="")
@@ -47,7 +51,7 @@ class SheetMusic(models.Model):
     tags = models.TextField(blank=True,default="")
 
     class Meta:
-        ordering = ['-rejected','verified']
+        ordering = ['-pk']
 
     def __str__(self):
         return self.name

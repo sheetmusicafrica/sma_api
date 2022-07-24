@@ -15,7 +15,7 @@ from .serializer import *
 from .models import *
 
 from composer.models import FollowComposer, UserPaymentHistory, UserPaymentLog, ComposerProfile,ComposerAccount
-from sheet_music_africa.settings import BOTREGEX,LOGO_URL,MINIMUM_SCORE_PRICE, PAYMENT_SECRET_KEY, FLUTTER_WAVE_COUNTRIES, FLUTTER_URL, AWS_STORAGE_BUCKET_NAME, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_S3_REGION_NAME, ACCOUNT_NAME
+from sheet_music_africa.settings import MAIN_SITE_ADDRESS,BOTREGEX,LOGO_URL,MINIMUM_SCORE_PRICE, PAYMENT_SECRET_KEY, FLUTTER_WAVE_COUNTRIES, FLUTTER_URL, AWS_STORAGE_BUCKET_NAME, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_S3_REGION_NAME, ACCOUNT_NAME
 
 import requests,math,datetime,decimal,re
 
@@ -38,17 +38,11 @@ class GenreView(viewsets.ModelViewSet):
 
 def ourRecommendations(queryset=None,song=None,user=None):
     if song != None:
-        # print(song.genre.all())
         genre = [g.id for g in song.genre.all()]
         queryset = SheetMusic.objects.filter(Q(genre__in=genre)&Q(verified=True)&Q(deleted=False)).distinct()
 
     if queryset == None:
         queryset = removePurchasedSong(user)
-    # else:
-    #     queryset = queryset
-
-    #     if song != None:
-    #         queryset = queryset
 
     return queryset.order_by("-point")
 
@@ -411,8 +405,8 @@ class GoToDigitalLibary(generics.ListAPIView):
             user = request.user
             my_songs = Score_sale.objects.filter(
                 Q(user=user)
-                & Q(purchased=True)
-                & Q(downloadable=True)
+                &Q(purchased=True)
+                &Q(downloadable=True)
             )
             for song in my_songs:
                 current_song = song.score.main_song
@@ -734,24 +728,30 @@ def markSong(request):
 
 
 #Link Sharing
+@api_view(['get'])
+def redirect_to_frontend(request):
+    return HttpResponseRedirect(MAIN_SITE_ADDRESS)
 
 @api_view(['get'])
-def deapLink(request,link):
+def redirect_composer_to_frontend(request,path):
+    return HttpResponseRedirect(f"{MAIN_SITE_ADDRESS}/{path}")
+
+@api_view(['get'])
+def redirect_song_to_frontend(request,path=None,param=None):
+    #return HttpResponseRedirect(f"{MAIN_SITE_ADDRESS}/{path}/{param}")
+    url = f"{MAIN_SITE_ADDRESS}/{path}/{param}"
     try:
-        pk = int(link.split("-")[-1])
+        pk = int(param.split("-")[-1])
         song = SheetMusic.objects.get(pk=pk)
 
-        url = f"https://www.sheetmusicafrica.com/c/{song.composer.username}/{link}"
 
-        if re.search(f"^{BOTREGEX}",request.META['HTTP_USER_AGENT']) == None:
-            return HttpResponseRedirect(url)
-        else:
+        if re.search(f"^{BOTREGEX}",request.META['HTTP_USER_AGENT']) != None:
             if song.deleted == False:
                 return render(request,'musicStore/crawler.html',{'song':song,'url':url})
 
     except SheetMusic.DoesNotExist:
         pass
 
-    return HttpResponse("")
+    return HttpResponseRedirect(url)
 
     

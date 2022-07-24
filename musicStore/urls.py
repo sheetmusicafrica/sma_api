@@ -24,5 +24,4 @@ urlpatterns = [
 
     path('unverified-song/', views.getUnverifiedSongs,name='getUnverifiedSongs'),
     path('mark-song/', views.markSong,name='markSong'),
-    path('share/<str:link>', views.deapLink,name='deapLink'),
 ]

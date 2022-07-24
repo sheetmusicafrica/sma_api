@@ -26,6 +26,8 @@ from composer.serializer import CustomJWTSerializer
 
 from password.views import updatePassword, checkToken, generatePasswordToken
 
+from musicStore.views import redirect_to_frontend,redirect_song_to_frontend,redirect_composer_to_frontend
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('store/', include('musicStore.urls')),
@@ -42,6 +44,11 @@ urlpatterns = [
     path('forgot-password/', generatePasswordToken, name='forgot-password'),
     path('check-token/', checkToken, name='check-token'),
     path('update-password/', updatePassword, name='update-password'),
+
+    #redirect to frontend
+    path('<str:path>/<str:param>', redirect_song_to_frontend,name='redirect_to_frontend'),
+    path('', redirect_to_frontend,name='redirect_to_frontend'),
+    path('<str:path>', redirect_composer_to_frontend,name='redirect_to_frontend'),
 
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

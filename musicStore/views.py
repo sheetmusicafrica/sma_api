@@ -734,12 +734,12 @@ def redirect_to_frontend(request):
 
 @api_view(['get'])
 def redirect_composer_to_frontend(request,path):
-    return HttpResponseRedirect(f"{MAIN_SITE_ADDRESS}/{path}")
+    return HttpResponseRedirect(f"{MAIN_SITE_ADDRESS}/c/{path}")
 
 @api_view(['get'])
 def redirect_song_to_frontend(request,path=None,param=None):
     #return HttpResponseRedirect(f"{MAIN_SITE_ADDRESS}/{path}/{param}")
-    url = f"{MAIN_SITE_ADDRESS}/{path}/{param}"
+    url = f"{MAIN_SITE_ADDRESS}/c/{path}/{param}"
     try:
         pk = int(param.split("-")[-1])
         song = SheetMusic.objects.get(pk=pk)

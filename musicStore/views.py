@@ -1,3 +1,4 @@
+from cProfile import Profile
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.http import HttpResponseRedirect,HttpResponse
@@ -734,11 +735,33 @@ def redirect_to_frontend(request):
 
 @api_view(['get'])
 def redirect_composer_to_frontend(request,path):
-    return HttpResponseRedirect(f"{MAIN_SITE_ADDRESS}/c/{path}")
+    url = f"{MAIN_SITE_ADDRESS}/c/{path}"
+    try:
+        user = User.objects.get(username=path)
+        try:
+            profile = ComposerProfile.objects.get(user=user)
+            image = None
+            if profile.pic != None:
+                image = profile.pic.url
+
+            if re.search(f"^{BOTREGEX}",request.META['HTTP_USER_AGENT']) != None:
+                return render(request,'musicStore/crawler.html',{
+                    'title':f"{user.first_name} {user.last_name}",
+                    'discription':f"{profile.discription}"[:64],
+                    'url':url,
+                    'image':image
+                })
+
+        except ComposerProfile.DoesNotExist:
+            pass
+
+    except SheetMusic.DoesNotExist:
+        pass
+
+    return HttpResponseRedirect(url)
 
 @api_view(['get'])
 def redirect_song_to_frontend(request,path=None,param=None):
-    #return HttpResponseRedirect(f"{MAIN_SITE_ADDRESS}/{path}/{param}")
     url = f"{MAIN_SITE_ADDRESS}/c/{path}/{param}"
     try:
         pk = int(param.split("-")[-1])
@@ -747,7 +770,17 @@ def redirect_song_to_frontend(request,path=None,param=None):
 
         if re.search(f"^{BOTREGEX}",request.META['HTTP_USER_AGENT']) != None:
             if song.deleted == False:
-                return render(request,'musicStore/crawler.html',{'song':song,'url':url})
+                context ={
+                    'url':url,
+                }
+                context['title'] = f"{song.name}"
+                context['discription'] = f"{song.discription}"[:65]
+                if song.thumbnail:
+                    context['image'] = song.thumbnail.url
+                if song.audio:
+                    context['audio'] = song.audio.url
+
+                return render(request,'musicStore/crawler.html',context)
 
     except SheetMusic.DoesNotExist:
         pass

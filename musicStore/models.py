@@ -35,7 +35,7 @@ class SheetMusic(models.Model):
     #the person uploading the sheet
     composer = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     #contains namae of all the composers seperated by a ,
-    composed_by = models.TextField(default="")
+    composed_by = models.TextField(default="",blank=True)
     # schange to a choice select whenever possible
     skill_level = models.CharField(max_length=15, default="Beginner")
     video_link = models.TextField(default="")

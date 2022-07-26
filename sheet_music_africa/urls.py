@@ -46,9 +46,9 @@ urlpatterns = [
     path('update-password/', updatePassword, name='update-password'),
 
     #redirect to frontend
-    path('<str:path>/<str:param>', redirect_song_to_frontend,name='redirect_to_frontend'),
+    path('c/<str:path>/<str:param>', redirect_song_to_frontend,name='redirect_to_frontend'),
     path('', redirect_to_frontend,name='redirect_to_frontend'),
-    path('<str:path>', redirect_composer_to_frontend,name='redirect_to_frontend'),
+    path('c/<str:path>', redirect_composer_to_frontend,name='redirect_to_frontend'),
 
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

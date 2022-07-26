@@ -741,7 +741,7 @@ def redirect_composer_to_frontend(request,path):
         try:
             profile = ComposerProfile.objects.get(user=user)
             image = None
-            if profile.pic != None:
+            if profile.pic:
                 image = profile.pic.url
 
             if re.search(f"^{BOTREGEX}",request.META['HTTP_USER_AGENT']) != None:

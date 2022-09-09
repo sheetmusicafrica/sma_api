@@ -30,7 +30,6 @@ class OriginalSheetMusicSerializer(serializers.ModelSerializer):
         model = SheetMusic
         fields = "__all__"
 
-from rest_framework.response import Response
 class SheetMusicSerializer(serializers.ModelSerializer):
     genre = GenreSerializer(read_only=True, many=True)
     composer = serializers.SerializerMethodField()
@@ -42,13 +41,11 @@ class SheetMusicSerializer(serializers.ModelSerializer):
     class Meta:
         model = SheetMusic
         fields = ["id", "name", "genre", "discription", "rating", "skill_level", "video_link",
-                  "demo", "thumbnail", "audio", "composer", "username", 'star', 'price', 'partScore','tags']
+                  "demo", "thumbnail", "audio", "composer", "username", 'star', 'price', 'partScore','tags','composed_by']
                   
 
     def get_username(self, obj):
         return obj.composer.username
-
-        
 
     def get_price(self, obj):
         return Score.objects.get(Q(main_song=obj) & Q(name="full_score")).price

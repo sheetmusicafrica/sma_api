@@ -318,7 +318,6 @@ class CartView(viewsets.ModelViewSet):
 
 class AddToCart(views.APIView):
     def post(self, request):
-        form = request.POST
         user = request.user
         cart_list = request.POST['cart_list']
 
@@ -777,8 +776,6 @@ def redirect_song_to_frontend(request,path=None,param=None):
                 context['discription'] = f"{song.discription}"[:65]
                 if song.thumbnail:
                     context['image'] = song.thumbnail.url
-                if song.audio:
-                    context['audio'] = song.audio.url
 
                 return render(request,'musicStore/crawler.html',context)
 

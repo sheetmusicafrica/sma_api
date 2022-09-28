@@ -1,4 +1,3 @@
-from cProfile import Profile
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.http import HttpResponseRedirect,HttpResponse
@@ -26,7 +25,7 @@ from botocore.exceptions import ClientError
 
 
 class SitePagination(pagination.PageNumberPagination):
-    page_size = 5
+    page_size = 12
     page_size_query_param = 'page_size'
     page_query_param = 'page'
     max_page_size = 10000

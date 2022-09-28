@@ -12,6 +12,10 @@ class PublicMediaStorage(S3Boto3Storage):
     default_acl = 'public-read'
     file_overwrite = False
 
+class GameMediaStorage(S3Boto3Storage):
+    location = 'game'
+    default_acl = 'public-read'
+    file_overwrite = True
 
 class PrivateMediaStorage(S3Boto3Storage):
     location = 'private'

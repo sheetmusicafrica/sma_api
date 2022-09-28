@@ -28,6 +28,8 @@ from password.views import updatePassword, checkToken, generatePasswordToken
 
 from musicStore.views import redirect_to_frontend,redirect_song_to_frontend,redirect_composer_to_frontend
 
+from game.views import ManageGameRequest
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('store/', include('musicStore.urls')),
@@ -50,5 +52,7 @@ urlpatterns = [
     path('', redirect_to_frontend,name='redirect_to_frontend'),
     path('c/<str:path>', redirect_composer_to_frontend,name='redirect_to_frontend'),
 
+    #game view
+     path('game/', ManageGameRequest.as_view(), name='ManageGameRequest'),
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

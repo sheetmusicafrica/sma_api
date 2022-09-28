@@ -1,0 +1,17 @@
+from rest_framework import serializers
+
+from .models import Competition, GameProfile
+
+
+class GameProfileSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = GameProfile
+        fields = ["full_name",'nickname', "pic", "score"]
+
+
+class CompetitionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Competition
+        fields = ["id","name","location"]
+                  

@@ -7,7 +7,7 @@ class GameProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = GameProfile
-        fields = ["full_name",'nickname', "pic", "score"]
+        fields = ["full_name",'nickname', "pic", "score","email","state","password"]
 
 
 class CompetitionSerializer(serializers.ModelSerializer):

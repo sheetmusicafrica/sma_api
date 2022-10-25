@@ -1,4 +1,4 @@
-from enum import unique
+import hashlib
 from django.db import models
 from django.db.models import Q
 
@@ -32,15 +32,27 @@ class Competition(models.Model):
 class GameProfile(models.Model):    
     full_name = models.CharField(max_length=300)
     nickname = models.CharField(max_length=100,default="",unique=True)
+    email = models.EmailField(unique=True)
     pic = models.FileField(null=True,blank=True,storage=GameMediaStorage())
     score = models.PositiveBigIntegerField(default=0)
-    competition = models.ManyToManyField(Competition,blank=True)    
+    competition = models.ManyToManyField(Competition,blank=True)  
+    password = models.TextField()  
+    state = models.CharField(max_length=30)
 
     class Meta:
         ordering = ['-score']
 
     def __str__(self):
         return self.full_name
+
+    def save_password(self,password):
+        hash = hashlib.md5(password.encode())
+        self.password = hash.hexdigest()
+        self.save()
+
+    def check_password(self,password):
+        hash = hashlib.md5(password.encode())
+        return self.password == hash.hexdigest()
 
 
 

@@ -38,7 +38,7 @@ ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1").split(",") #remov
 
 
 #GAME DATA
-GAME_SECRET_KEY = os.getenv("GAME_SECRET_KEY", get_random_secret_key())
+GAME_SECRET_KEY = os.getenv("GAME_SECRET_KEY", "batman")
 GAME_ALGORITHM = "HS256"
 
 #add app address to allowed_origins

@@ -22,6 +22,7 @@ get competition - get --done
 
 """
 
+
 class ManageGameRequest(views.APIView):
     permission_classes = [AllowAny]
 
@@ -61,6 +62,9 @@ class ManageGameRequest(views.APIView):
             if new.is_valid() == True:
                 new.save()
 
+                user = GameProfile.objects.get(nickname=new.data['nickname'])
+                user.save_password(data['password'])
+
                 user_info = {
                     "name":data['full_name'],
                     "nickname":data['nickname']
@@ -72,6 +76,42 @@ class ManageGameRequest(views.APIView):
             else:
                 return Response({'error':new.errors},status=status.HTTP_400_BAD_REQUEST)
 
+        elif action == "login":
+            username = data['username']
+            password = data['password']
+
+            try:
+                user = GameProfile.objects.get(Q(nickname=username)|Q(email=username))
+                if user.check_password(password) == True:
+                    user_info = {
+                    "name":user.full_name,
+                    "nickname":user.nickname
+                    }
+
+                    token = jwt.encode(user_info, GAME_SECRET_KEY, algorithm=GAME_ALGORITHM)
+                    return Response({'token':token},status=status.HTTP_200_OK)
+
+            except GameProfile.DoesNotExist:
+                pass
+            return Response({'error':"Invalid Credentials"},status=status.HTTP_400_BAD_REQUEST)
+        
+        elif action == "update":
+            try:
+                user = decodeToken(data['token'])
+                new = GameProfileSerializer(user,data=data)
+
+                if new.is_valid() == True:
+                    new.save()
+                else:
+                    return Response({'error':new.errors})
+
+                return Response({})
+
+
+            except GameProfile.DoesNotExist:
+                Response({'msg':f"Invalid Token"},status=status.HTTP_400_BAD_REQUEST)
+                
+
         else:
 
             try:
@@ -81,8 +121,7 @@ class ManageGameRequest(views.APIView):
                 return Response({'msg':"Competition does not exist"},status=status.HTTP_400_BAD_REQUEST)
 
             try:
-                token = jwt.decode(data['token'], GAME_SECRET_KEY, algorithm=GAME_ALGORITHM)
-                user = GameProfile.objects.get(nickname=token['nickname'])
+                user = decodeToken(data['token'])
 
             except GameProfile.DoesNotExist:
                 Response({'msg':f"Invalid Token"},status=status.HTTP_400_BAD_REQUEST)
@@ -104,3 +143,7 @@ class ManageGameRequest(views.APIView):
             
             return Response({},status=status.HTTP_200_OK)
             
+
+def decodeToken(token):
+    token = jwt.decode(token, GAME_SECRET_KEY, algorithm=GAME_ALGORITHM)
+    return GameProfile.objects.get(nickname=token['nickname'])

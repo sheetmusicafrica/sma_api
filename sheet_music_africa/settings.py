@@ -44,6 +44,7 @@ GAME_ALGORITHM = "HS256"
 #add app address to allowed_origins
 CORS_ALLOWED_ORIGINS = [
     "https://www.sheetmusicafrica.com",
+    "https://relativepitch.sheetmusicafrica.com",
 ]
 
 

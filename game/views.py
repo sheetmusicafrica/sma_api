@@ -8,7 +8,7 @@ from rest_framework.permissions import AllowAny
 
 from sheet_music_africa.settings import GAME_ALGORITHM,GAME_SECRET_KEY
 
-from .serializers import GameProfileSerializer,CompetitionSerializer
+from .serializers import GameProfileSerializer,CompetitionSerializer,UserInfoSerializer
 from .models import *
 
 
@@ -19,6 +19,9 @@ submit competition score - post  --done
 
 get leaderboard - get --done
 get competition - get --done
+
+
+update profile na remain
 
 """
 
@@ -71,7 +74,7 @@ class ManageGameRequest(views.APIView):
                 }
 
                 token = jwt.encode(user_info, GAME_SECRET_KEY, algorithm=GAME_ALGORITHM)
-                return Response({'token':token},status=status.HTTP_201_CREATED)
+                return Response({'token':token,'info':UserInfoSerializer(user).data},status=status.HTTP_201_CREATED)
 
             else:
                 return Response({'error':new.errors},status=status.HTTP_400_BAD_REQUEST)
@@ -89,7 +92,7 @@ class ManageGameRequest(views.APIView):
                     }
 
                     token = jwt.encode(user_info, GAME_SECRET_KEY, algorithm=GAME_ALGORITHM)
-                    return Response({'token':token},status=status.HTTP_200_OK)
+                    return Response({'token':token,'info':UserInfoSerializer(user).data},status=status.HTTP_200_OK)
 
             except GameProfile.DoesNotExist:
                 pass
@@ -98,14 +101,15 @@ class ManageGameRequest(views.APIView):
         elif action == "update":
             try:
                 user = decodeToken(data['token'])
-                new = GameProfileSerializer(user,data=data)
+                if "pic" in data.keys():
+                    if user.pic != None:
+                        user.pic.delete()
 
-                if new.is_valid() == True:
-                    new.save()
-                else:
-                    return Response({'error':new.errors})
+                    user.pic = data['pic']
+                    user.save()
+                    return Response({'msg':"Success"})
 
-                return Response({})
+                return Response({'msg':"attach image"})
 
 
             except GameProfile.DoesNotExist:

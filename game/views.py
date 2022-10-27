@@ -107,13 +107,21 @@ class ManageGameRequest(views.APIView):
 
                     user.pic = data['pic']
                     user.save()
-                    return Response({'msg':"Success"})
+                    return Response({'msg':"Success","data":user.pic.url})
 
                 return Response({'msg':"attach image"})
 
 
             except GameProfile.DoesNotExist:
-                Response({'msg':f"Invalid Token"},status=status.HTTP_400_BAD_REQUEST)
+                return Response({'msg':"Invalid Token"},status=status.HTTP_400_BAD_REQUEST)
+        
+        elif action == "info":
+            try:
+                user = decodeToken(data['token'])
+                return Response({'msg':"Success","data":UserInfoSerializer(user).data})
+
+            except GameProfile.DoesNotExist:
+                return Response({'msg':"Invalid Token"},status=status.HTTP_400_BAD_REQUEST)
                 
 
         else:

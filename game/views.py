@@ -73,7 +73,7 @@ class ManageGameRequest(views.APIView):
                     "nickname":data['nickname']
                 }
 
-                token = jwt.encode(user_info, GAME_SECRET_KEY, algorithm=GAME_ALGORITHM)
+                token = jwt.encode(user_info, GAME_SECRET_KEY, algorithm="HS256")
                 return Response({'token':token,'info':UserInfoSerializer(user).data},status=status.HTTP_201_CREATED)
 
             else:
@@ -91,7 +91,7 @@ class ManageGameRequest(views.APIView):
                     "nickname":user.nickname
                     }
 
-                    token = jwt.encode(user_info, GAME_SECRET_KEY, algorithm=GAME_ALGORITHM)
+                    token = jwt.encode(user_info, GAME_SECRET_KEY, algorithm="HS256")
                     return Response({'token':token,'info':UserInfoSerializer(user).data},status=status.HTTP_200_OK)
 
             except GameProfile.DoesNotExist:
@@ -100,6 +100,7 @@ class ManageGameRequest(views.APIView):
         
         elif action == "update":
             try:
+                print(data['token'])
                 user = decodeToken(data['token'])
                 if "pic" in data.keys():
                     user.pic = data['pic']
@@ -154,5 +155,5 @@ class ManageGameRequest(views.APIView):
             
 
 def decodeToken(token):
-    token = jwt.decode(token, GAME_SECRET_KEY, algorithm=GAME_ALGORITHM)
-    return GameProfile.objects.get(nickname=token['nickname'])
+    my_token = jwt.decode(token, GAME_SECRET_KEY, algorithm="HS256")
+    return GameProfile.objects.get(nickname=my_token['nickname'])

@@ -155,5 +155,5 @@ class ManageGameRequest(views.APIView):
             
 
 def decodeToken(token):
-    my_token = jwt.decode(token, GAME_SECRET_KEY, algorithm="HS256")
+    my_token = jwt.decode(token, GAME_SECRET_KEY, algorithms="HS256")
     return GameProfile.objects.get(nickname=my_token['nickname'])

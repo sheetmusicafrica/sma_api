@@ -102,9 +102,6 @@ class ManageGameRequest(views.APIView):
             try:
                 user = decodeToken(data['token'])
                 if "pic" in data.keys():
-                    if user.pic != None:
-                        user.pic.delete()
-
                     user.pic = data['pic']
                     user.save()
                     return Response({'msg':"Success","data":user.pic.url})

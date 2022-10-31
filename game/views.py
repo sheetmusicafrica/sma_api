@@ -125,7 +125,7 @@ class ManageGameRequest(views.APIView):
         else:
 
             try:
-                competiton = Competition.objects.get(Q(id=int(data['competition']))&Q(status="STA"))
+                competiton = Competition.objects.get(Q(name = data['competition'])&Q(status="STA"))
 
             except Competition.DoesNotExist:
                 return Response({'msg':"Competition does not exist"},status=status.HTTP_400_BAD_REQUEST)
@@ -148,8 +148,13 @@ class ManageGameRequest(views.APIView):
             else:
                 if competiton in user.competition.all() and competiton.status == "STA":
                     score = int(data['score'])
-                    user.score += score
-                    user.save()
+                    if score > user.score:
+                        if "has_ended" in data.keys() and (data['has_ended'] == True or data['has_ended'] == "true"):
+                            #save previous score here
+                            ScoreLog(profie=user,score=user.score).save()
+
+                        user.score = score
+                        user.save()
             
             return Response({},status=status.HTTP_200_OK)
             

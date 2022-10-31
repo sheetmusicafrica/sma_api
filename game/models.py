@@ -1,4 +1,5 @@
 import hashlib
+from turtle import onclick
 from django.db import models
 from django.db.models import Q
 
@@ -55,5 +56,9 @@ class GameProfile(models.Model):
         return self.password == hash.hexdigest()
 
 
+class ScoreLog(models.Model):
+    profile = models.ForeignKey(GameProfile,on_delete=models.CASCADE)
+    score = models.PositiveBigIntegerField()
 
-
+    def __str__(self):
+        return f"{self.profile.full_name} - {self.score}"

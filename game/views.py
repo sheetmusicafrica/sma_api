@@ -66,6 +66,8 @@ class ManageGameRequest(views.APIView):
                 new.save()
 
                 user = GameProfile.objects.get(nickname=new.data['nickname'])
+                user.email = user.email.lower()
+                user.save()
                 user.save_password(data['password'])
 
                 user_info = {
@@ -80,7 +82,7 @@ class ManageGameRequest(views.APIView):
                 return Response({'error':new.errors},status=status.HTTP_400_BAD_REQUEST)
 
         elif action == "login":
-            username = data['username']
+            username = data['username'].lower()
             password = data['password']
 
             try:

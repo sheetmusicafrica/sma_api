@@ -8,7 +8,7 @@ from rest_framework.permissions import AllowAny
 
 from sheet_music_africa.settings import GAME_ALGORITHM,GAME_SECRET_KEY
 
-from .serializers import GameProfileSerializer,CompetitionSerializer,UserInfoSerializer
+from .serializers import GameProfileSerializer,CompetitionSerializer,UserInfoSerializer,LeaderBoardSerializer
 from .models import *
 
 
@@ -42,7 +42,7 @@ class ManageGameRequest(views.APIView):
         else:
             try:
                 competition = Competition.objects.get(Q(id=int(id))&Q(status="STA"))
-                data = GameProfileSerializer(
+                data = LeaderBoardSerializer(
                     competition.get_leader_board(),
                     many=True
                 ).data
@@ -150,16 +150,24 @@ class ManageGameRequest(views.APIView):
             else:
                 if competiton in user.competition.all() and competiton.status == "STA":
                     score = int(data['score'])
+                    prev_scores = ScoreLog.objects.filter(profile=user).order_by("-score")
 
-                    if "has_ended" in data.keys():
-                            #save previous score here
-                            ScoreLog(profie=user,score=user.score).save()
+                    if prev_scores.count() == 0:
+                        max_score = 0
+                    else:
+                        max_score = prev_scores[0].score
 
-                    if score > user.score:
+                    if score > max_score and "has_ended" in data.keys():
+                        ScoreLog(profie=user,score=user.score).save()
+                        user.score  = 0
+                    else:
                         user.score = score
-                        user.save()
+
+                    user.save()
+                    
+                    competiton.update_state()
             
-            return Response({},status=status.HTTP_200_OK)
+            return Response({"state":competiton.status},status=status.HTTP_200_OK)
             
 
 def decodeToken(token):

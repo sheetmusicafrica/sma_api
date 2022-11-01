@@ -1,4 +1,4 @@
-import hashlib
+import hashlib,datetime
 from django.db import models
 from django.db.models import Q
 
@@ -8,7 +8,8 @@ from sheet_music_africa.storage_backends import GameMediaStorage
 class Competition(models.Model):
     name = models.CharField(max_length=20)
     pass_phrase = models.CharField(max_length=20)
-    date_started = models.DateField(null=True,blank=True)
+    date_started = models.DateTimeField(null=True,blank=True)
+    span = models.PositiveBigIntegerField(default=0)
     date_ended = models.DateField(null=True,blank=True)
     location = models.CharField(max_length=200,default="Virtual")
     status = models.CharField(
@@ -27,6 +28,18 @@ class Competition(models.Model):
     
     def get_leader_board(self):
         return self.gameprofile_set.all().order_by("-score")
+
+    def update_state(self):
+        if self.status == "STA":
+            start = self.date_started.time()
+            now = datetime.datetime.now().time()
+
+            if start.timestamp() - now.timestamp() > self.span:
+                self.status = "END"
+                self.save()
+
+        return self.status != "STA"
+
 
 
 class GameProfile(models.Model):    

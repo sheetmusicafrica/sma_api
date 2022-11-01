@@ -151,10 +151,10 @@ class ManageGameRequest(views.APIView):
                 if competiton in user.competition.all() and competiton.status == "STA":
                     score = int(data['score'])
 
-                    if "has_ended" in data.keys() and (data['has_ended'] == True or data['has_ended'] == "true"):
+                    if "has_ended" in data.keys():
                             #save previous score here
                             ScoreLog(profie=user,score=user.score).save()
-                            
+
                     if score > user.score:
                         user.score = score
                         user.save()

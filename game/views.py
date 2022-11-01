@@ -127,7 +127,7 @@ class ManageGameRequest(views.APIView):
         else:
 
             try:
-                competiton = Competition.objects.get(Q(name = data['competition'])&Q(status="STA"))
+                competiton = Competition.objects.get(Q(name=data['competition'])&Q(status="STA"))
 
             except Competition.DoesNotExist:
                 return Response({'msg':"Competition does not exist"},status=status.HTTP_400_BAD_REQUEST)

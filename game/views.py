@@ -172,8 +172,7 @@ class ManageGameRequest(views.APIView):
                         max_score = prev_scores[0].score
 
                     if "has_ended" in data.keys():
-                        if score > max_score:
-                            ScoreLog(profile=user,score=user.score).save()
+                        ScoreLog(profile=user,score=user.score).save()
                         user.score  = 0
                     else:
                         user.score = score

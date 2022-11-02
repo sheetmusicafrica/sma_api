@@ -31,7 +31,7 @@ class ManageGameRequest(views.APIView):
 
     def get(self,request):
         page = request.query_params.get('page', None)
-        id = request.query_params.get('id',None)
+        name = request.query_params.get('name',None)
 
         if page == None:
             data = CompetitionSerializer(
@@ -41,7 +41,7 @@ class ManageGameRequest(views.APIView):
         
         else:
             try:
-                competition = Competition.objects.get(id=int(id))
+                competition = Competition.objects.get(name=name)
                 if page == "status":
                     remaining_time = "Ended"
                     if competition.status == "STA":

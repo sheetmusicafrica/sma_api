@@ -1,4 +1,6 @@
-import hashlib,datetime
+import hashlib
+
+from django.utils import timezone
 from django.db import models
 from django.db.models import Q
 
@@ -10,7 +12,7 @@ class Competition(models.Model):
     pass_phrase = models.CharField(max_length=20)
     date_started = models.DateTimeField(null=True,blank=True)
     span = models.PositiveBigIntegerField(default=0)
-    date_ended = models.DateField(null=True,blank=True)
+    date_ended = models.DateTimeField(null=True,blank=True)
     location = models.CharField(max_length=200,default="Virtual")
     status = models.CharField(
         max_length=3,
@@ -31,14 +33,15 @@ class Competition(models.Model):
 
     def update_state(self):
         if self.status == "STA":
-            start = self.date_started.time()
-            now = datetime.datetime.now().time()
-
-            if start.timestamp() - now.timestamp() > self.span:
+            diff = timezone.now().timestamp() - self.date_started.timestamp()
+            print(diff, " ",self.span)
+            if diff > self.span:
                 self.status = "END"
+                self.span = 0
+                self.date_ended = timezone.now()
                 self.save()
 
-        return self.status != "STA"
+        return [self.status != "STA",diff]
 
 
 

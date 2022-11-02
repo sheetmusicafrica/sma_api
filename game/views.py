@@ -41,11 +41,25 @@ class ManageGameRequest(views.APIView):
         
         else:
             try:
-                competition = Competition.objects.get(Q(id=int(id))&Q(status="STA"))
-                data = LeaderBoardSerializer(
-                    competition.get_leader_board(),
-                    many=True
-                ).data
+                competition = Competition.objects.get(id=int(id))
+                if page == "status":
+                    remaining_time = "Ended"
+                    if competition.status == "STA":
+                        remaining_time = competition.update_state()[1]
+
+                    data = {
+                        'id':competition.id,
+                        'status':competition.status,
+                        'time_elasped':remaining_time,
+                        'date_started':competition.date_started,
+                        'name':competition.name
+                    }
+
+                else:
+                    data = LeaderBoardSerializer(
+                        competition.get_leader_board(),
+                        many=True
+                    ).data
 
             except Competition.DoesNotExist:
                 return Response({"msg":"Competition does not exist"},status=status.HTTP_400_BAD_REQUEST)
@@ -157,8 +171,9 @@ class ManageGameRequest(views.APIView):
                     else:
                         max_score = prev_scores[0].score
 
-                    if score > max_score and "has_ended" in data.keys():
-                        ScoreLog(profie=user,score=user.score).save()
+                    if "has_ended" in data.keys():
+                        if score > max_score:
+                            ScoreLog(profile=user,score=user.score).save()
                         user.score  = 0
                     else:
                         user.score = score

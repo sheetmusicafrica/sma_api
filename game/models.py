@@ -29,19 +29,23 @@ class Competition(models.Model):
 
     
     def get_leader_board(self):
-        return self.gameprofile_set.all().order_by("-score")
+        return self.gameprofile_set.all().order_by("-high_score")
 
     def update_state(self):
         if self.status == "STA":
             diff = timezone.now().timestamp() - self.date_started.timestamp()
-            print(diff, " ",self.span)
-            if diff > self.span:
+            span = self.span
+            print(span," ",span//60)
+            time = (float(span) - diff)
+            print("time ",time)
+
+            if diff > span:
                 self.status = "END"
                 self.span = 0
                 self.date_ended = timezone.now()
                 self.save()
 
-        return [self.status != "STA",diff]
+        return [self.status != "STA",time]
 
 
 
@@ -51,12 +55,13 @@ class GameProfile(models.Model):
     email = models.EmailField(unique=True)
     pic = models.FileField(null=True,blank=True,storage=GameMediaStorage())
     score = models.PositiveBigIntegerField(default=0)
+    high_score = models.PositiveBigIntegerField(default=0)
     competition = models.ManyToManyField(Competition,blank=True)  
     password = models.TextField()  
     state = models.CharField(max_length=30)
 
     class Meta:
-        ordering = ['-score']
+        ordering = ['-high_score']
 
     def __str__(self):
         return self.full_name
@@ -69,11 +74,3 @@ class GameProfile(models.Model):
     def check_password(self,password):
         hash = hashlib.md5(password.encode())
         return self.password == hash.hexdigest()
-
-
-class ScoreLog(models.Model):
-    profile = models.ForeignKey(GameProfile,on_delete=models.CASCADE)
-    score = models.PositiveBigIntegerField()
-
-    def __str__(self):
-        return f"{self.profile.full_name} - {self.score}"

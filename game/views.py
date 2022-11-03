@@ -52,6 +52,7 @@ class ManageGameRequest(views.APIView):
                         'status':competition.status,
                         'time_elasped':remaining_time,
                         'date_started':competition.date_started,
+                        'date':competition.date_started.date(),
                         'name':competition.name
                     }
 
@@ -164,15 +165,9 @@ class ManageGameRequest(views.APIView):
             else:
                 if competiton in user.competition.all() and competiton.status == "STA":
                     score = int(data['score'])
-                    prev_scores = ScoreLog.objects.filter(profile=user).order_by("-score")
-
-                    if prev_scores.count() == 0:
-                        max_score = 0
-                    else:
-                        max_score = prev_scores[0].score
 
                     if "has_ended" in data.keys():
-                        ScoreLog(profile=user,score=user.score).save()
+                        user.high_score=user.score
                         user.score  = 0
                     else:
                         user.score = score

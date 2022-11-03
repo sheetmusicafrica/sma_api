@@ -159,7 +159,7 @@ class ManageGameRequest(views.APIView):
                 if competiton.pass_phrase != passphrase:
                     return Response({'msg':f"Invalid competition phrase - {passphrase}"},status=status.HTTP_400_BAD_REQUEST)
 
-                if competiton not in user.competition.all() and competiton.status == "STA":
+                if competiton not in user.competition.all() and competiton.status != "END":
                     user.competition.add(competiton)
 
             else:

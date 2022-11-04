@@ -35,9 +35,7 @@ class Competition(models.Model):
         if self.status == "STA":
             diff = timezone.now().timestamp() - self.date_started.timestamp()
             span = self.span
-            print(span," ",span//60)
-            time = (float(span) - diff)
-            print("time ",time)
+            time = int(float(span) - diff)
 
             if diff > span:
                 self.status = "END"

@@ -163,11 +163,14 @@ class ManageGameRequest(views.APIView):
                     user.competition.add(competiton)
 
             else:
-                if competiton in user.competition.all() and competiton.status == "STA":
+                if competiton in user.competition.all():
+                    #and competiton.status == "STA"
                     score = int(data['score'])
 
+                    if score > user.high_score:
+                        user.high_score=score
+
                     if "has_ended" in data.keys():
-                        user.high_score=user.score
                         user.score  = 0
                     else:
                         user.score = score

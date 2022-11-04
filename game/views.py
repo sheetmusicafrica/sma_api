@@ -163,8 +163,7 @@ class ManageGameRequest(views.APIView):
                     user.competition.add(competiton)
 
             else:
-                if competiton in user.competition.all():
-                    #and competiton.status == "STA"
+                if competiton in user.competition.all() and competiton.status == "STA":
                     score = int(data['score'])
 
                     if score > user.high_score:
@@ -177,9 +176,9 @@ class ManageGameRequest(views.APIView):
 
                     user.save()
                     
-                    competiton.update_state()
+                    time = competiton.update_state()[1]
             
-            return Response({"state":competiton.status},status=status.HTTP_200_OK)
+            return Response({"state":competiton.status,'time_elasped':time},status=status.HTTP_200_OK)
             
 
 def decodeToken(token):

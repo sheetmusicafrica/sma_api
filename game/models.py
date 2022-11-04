@@ -38,7 +38,7 @@ class Competition(models.Model):
             time = int(float(span) - diff)
 
             if diff > span:
-                self.status = "END"
+                #self.status = "END"
                 self.span = 0
                 self.date_ended = timezone.now()
                 self.save()

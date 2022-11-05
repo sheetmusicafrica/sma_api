@@ -43,9 +43,9 @@ class ManageGameRequest(views.APIView):
             try:
                 competition = Competition.objects.get(name=name)
                 if page == "status":
-                    remaining_time = "Ended"
-                    if competition.status == "STA":
-                        remaining_time = competition.update_state()[1]
+                    # remaining_time = "Ended"
+                    # if competition.status == "STA":
+                    remaining_time = competition.update_state()[1]
 
                     data = {
                         'id':competition.id,
@@ -175,10 +175,8 @@ class ManageGameRequest(views.APIView):
                         user.score = score
 
                     user.save()
-                    
-                    time = competiton.update_state()[1]
             
-            return Response({"state":competiton.status,'time_elasped':time},status=status.HTTP_200_OK)
+            return Response({"state":competiton.status,'time_elasped':competiton.update_state()[1]},status=status.HTTP_200_OK)
             
 
 def decodeToken(token):

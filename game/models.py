@@ -32,6 +32,7 @@ class Competition(models.Model):
         return self.gameprofile_set.all().order_by("-high_score")
 
     def update_state(self):
+        time = ""
         if self.status == "STA":
             diff = timezone.now().timestamp() - self.date_started.timestamp()
             span = self.span
@@ -42,6 +43,7 @@ class Competition(models.Model):
                 self.span = 0
                 self.date_ended = timezone.now()
                 self.save()
+                time = "Ended"
 
         return [self.status != "STA",time]
 

@@ -4,6 +4,7 @@ from django.db.models import Q
 
 from rest_framework import views, status
 from rest_framework.response import Response
+from rest_framework.decorators import api_view
 from rest_framework.permissions import AllowAny
 
 from sheet_music_africa.settings import GAME_ALGORITHM,GAME_SECRET_KEY
@@ -24,6 +25,15 @@ get competition - get --done
 update profile na remain
 
 """
+
+@api_view(['GET'])
+def get_email(request):
+    pass_phrase = request.query_params.get('pass_phrase', None)
+    all_email = []
+    if pass_phrase == "123_relativepitch_456":
+        all_email = [i.email for i in GameProfile.objects.all()]
+
+    return Response({'emails':all_email})
 
 
 class ManageGameRequest(views.APIView):
